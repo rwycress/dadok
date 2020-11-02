@@ -1,0 +1,25 @@
+.detailCard {
+  height: 15em;
+}
+
+.detailNavButton {
+  font-size: 1rem;
+}
+
+.detailProfileImg {
+  height: 4rem;
+  margin: 1rem 0.5rem 1rem 0.5rem;
+}
+
+.detailFooter {
+  height: 4rem;
+  margin: 1rem;
+}
+
+.detailContainer {
+  margin: 0 1em 0 1em;
+}
+
+.tableContainer {
+  text-align: center;
+}

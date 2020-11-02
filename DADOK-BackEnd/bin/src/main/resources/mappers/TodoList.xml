@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.TodoListMapper"> <!-- mybatis는 namespace필수!! -->
+
+	<select id="totalCount">
+		SELECT count(*) 
+		FROM chickengak.todo;	
+	</select>
+	
+	<select id="selectByDay" resultType="TodoList">
+		SELECT 
+			no, create_at, user_no, content, complete
+		FROM 
+			chickengak.todo
+		WHERE 
+			DATE_FORMAT(create_at,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		AND
+			user_no = #{user_no}
+	</select>
+	
+	<insert id="insertTodo">
+		INSERT INTO chickengak.todo
+		    (
+		    user_no, 
+		    content 
+		    )
+		VALUES
+		    (
+		    #{user_no}, 
+		    #{content} 
+		    )
+	</insert>
+	
+	<update id="updateTodo">
+		UPDATE chickengak.todo
+		<set>
+			<if test="content != null"> content = #{content},</if>
+			<if test="complete != null"> complete = #{complete} ,</if>
+		</set>
+		WHERE 
+			no = #{no}
+	</update>
+	
+	
+	<delete id="deleteTodo">
+		DELETE FROM chickengak.todo
+		WHERE no = #{no}
+	</delete>
+</mapper>    
+    
+    
+    
+    
+    
+    

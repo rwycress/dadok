@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.SeatInfoMapper"> <!-- mybatis는 namespace필수!! -->
+
+	<!-- 모든 좌석 정보 받아오기 -->
+   <select id="selectsSeatInfo" resultType="SeatInfo"> <!-- resultType속성 필수!! -->
+      select 
+      		*
+      from 
+      		seatinfo
+   </select>
+   
+	<!-- 원하는 가맹점의 좌석들 받아오기 -->
+	<select id="selectByFranchisee" resultType="SeatInfo">
+		select 
+			*
+		from 
+			seatinfo
+		where 
+			franchisee_no = #{franchisee_no}
+		order by 
+			franchisee_seat_no DESC
+	</select>
+	
+	<!--  새로운 좌석 추가  -->
+	<insert id="insertSeatInfo">
+		insert 
+		into
+			seatinfo
+			(franchisee_no, franchisee_seat_no)
+		values
+			(#{franchisee_no}, #{franchisee_seat_no})
+	</insert>
+
+	<!-- 좌석정보 수정 -->
+	<update id="updateSeatInfo">
+		update
+			seatinfo
+		<set>
+			<if test="franchisee_no != 0"> franchisee_no = #{franchisee_no},</if>
+			<if test="franchisee_seat_no != 0"> franchisee_seat_no = #{franochisee_no}</if>
+		</set>
+		where
+			no = #{no}
+	</update>
+		
+	<!-- 좌석 삭제 -->
+	<delete id="deleteSeatInfo">
+		delete from
+			seatinfo
+		where
+			no = #{no}
+	</delete>
+</mapper>    
+    
+    
+    
+    
+    
+    

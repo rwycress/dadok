@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.UserMapper"> <!-- mybatis는 namespace필수!! -->
+
+	<!-- 일단 완료 -->
+
+	<!-- 유저 정보 받아오기 -->
+   <select id="selectUser" resultType="User"> <!-- resultType속성 필수!! -->
+      select 
+      		no,
+      		name,
+      		nickname,
+      		id,
+      		phone,
+      		birth,
+      		info,
+      		profile,
+      		email,
+      		info,
+      		join_date
+      from 
+      		chickengak.user
+      where
+      		id = #{id} 			
+      		and	
+      		password = #{password}
+   </select>
+   
+   <select id="likeList" resultType="PublicBoard">
+   		select
+   			board.*
+   		from
+   			chickengak.user as us,
+   			public_board as board
+   		where
+   			us.no = #{no}
+   </select>
+   
+   
+	<!-- 회원가입 -->
+	<insert id="insertUser">
+		insert 
+		into
+			chickengak.user
+			(
+				name, 
+				email, 
+				phone, 
+				profile, 
+				nickname, 
+				birth, 
+				id, 
+				password, 
+				info 
+			)
+		values
+			(
+				#{name}, 
+				#{email}, 
+				<choose>
+					<when test="phone != null"> #{phone},</when>
+					<otherwise>null,</otherwise>
+				</choose>
+				<choose>
+					<when test="profile != null"> #{profile}, </when>
+					<otherwise>null,</otherwise>
+				</choose>
+				#{nickname}, 
+				<choose>
+					<when test="birth != null"> #{birth},</when>
+					<otherwise>null,</otherwise>
+				</choose>
+				#{id}, 
+				#{password}, 
+				<choose>
+					<when test="info != null"> #{info}</when>
+					<otherwise> null</otherwise>
+				</choose>
+			)
+	</insert>
+
+	<!-- 회원정보 수정 -->
+	<update id="updateUser">
+		update 
+			chickengak.user
+		<set>
+			<if test="name 		!= null">		name		=	#{name},		</if>
+			<if test="password 	!= null">		password	=	#{password},	</if>
+			<if test="email 	!= null">		email		=	#{email},		</if>
+			<if test="phone 	!= null">		phone		=	#{phone},		</if>
+			<if test="profile	!= null">		profile		=	#{profile},		</if>
+			<if test="nickname 	!= null">		nickname	=	#{nickname},	</if>
+			<if test="birth		!= null">		birth		=	#{birth},		</if>
+			<if test="info		!= null">		info		=	#{info},		</if>
+		</set>
+		where
+			id = #{id} 
+			and 
+			password = #{password}
+	</update>
+		
+	<!-- 회원 탈퇴 -->
+	<delete id="deleteUser">
+		delete from 
+			chickengak.user
+		where
+			id = #{id} 
+			and 
+			password = #{password}	
+		
+	</delete>
+</mapper>    
+    
+    
+    
+    
+    
+    

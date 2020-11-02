@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.PublicBoardMapper"> <!-- mybatis는 namespace필수!! -->
+	<!-- ai값 받아오기, 파일 저장할때 쓸 글 번호 받아오는 기능. -->
+	<select id="getAI" resultType="Integer">
+		select max(no) from PUBLIC_BOARD ;
+	</select>
+
+   
+   <!-- 게시물 페이지 단위로 받아오기 -->
+   <select id="selectByPage" resultType="PublicBoard">
+   		select 
+			pb.`no`			as        'no',
+   			pb.title 		as     title,
+   			pb.content		as 	 content,
+   			pb.tag			as       tag,
+   			pb.download		as	download,
+			pb.source		as	  source,   			
+			pb.data_no		as	data_no,
+   			pb.create_at	as create_at,
+   			pb.update_at	as update_at,
+   			pb.view			as      view,
+   			us.nickname		as  user_nickname,
+			(
+			select 
+				count(*) 
+			from 
+				`like` as li
+			where 
+				li.board_no = pb.no
+				AND
+				li.type = 1
+			)				as 	'like'
+		from 
+			public_board 	as	pb
+		left join
+			chickengak.user as 	us
+		on
+			pb.USER_NO  = us.no
+   		limit
+   			#{page}, #{interval}
+   </select>
+   
+   <!-- 게시물 검색 ( 게시물 제목) -->
+   <!-- 게시물 검색 ( 작성자 ) -->
+   <!-- 게시물 검색 ( 내용 ) -->
+   <select id="search" resultType="PublicBoard">
+   		select 
+			pb.`no`			as        'no',
+   			pb.title 		as     title,
+   			pb.content		as 	 content,
+   			pb.tag			as       tag,
+   			pb.download		as	download,
+			pb.source		as	  source,   			
+			pb.data_no		as	data_no,
+   			pb.create_at	as create_at,
+   			pb.update_at	as update_at,
+   			pb.view			as      view,
+   			us.nickname		as  user_nickname,
+			(
+			select 
+				count(*) 
+			from 
+				`like` as li
+			where 
+				li.board_no = pb.no
+				AND
+				li.type = 1
+			)				as 	'like'
+		from 
+			public_board 	as	pb
+		left join
+			chickengak.user as 	us
+		on
+			pb.USER_NO  = us.no
+      	<where>
+      		<choose>
+      			<when test="title 		!= null"> pb.title 		like 	CONCAT('%',#{title},'%')		</when>
+      			<when test="content 	!= null"> pb.content 	like 	CONCAT('%',#{content},'%') 	</when>
+      			<when test="user_nickname 	!= null"> us.nickname 	= 		#{nickname} 					</when>
+      		</choose>
+      	</where>
+   </select>
+   
+   	<!-- 게시물 상세보기 -->
+   	<select id="select" resultType="PublicBoard">
+   		select
+   			pb.`no`			as        'no',
+   			pb.title 		as     title,
+   			pb.content		as 	 content,
+   			pb.tag			as       tag,
+   			pb.download		as	download,
+			pb.source		as	  source,   			
+			pb.data_no		as	data_no,
+   			pb.create_at	as create_at,
+   			pb.update_at	as update_at,
+   			pb.view			as      view,
+   			(
+			select 
+				count(*) 
+			from 
+				`like` as li
+			where 
+				li.board_no = pb.`no`
+				AND
+				li.type = 1
+			)				as 	'like',
+   			us.nickname		as  user_nickname
+   		from 
+			public_board 	as	pb
+		left join
+			chickengak.user as 	us
+		on
+			pb.USER_NO  = us.`no`
+   		where 
+   			pb.`no` = #{no}
+   	</select>
+   
+   
+	<!-- 게시물 작성 -->
+	<insert id="insertpublicBoard">
+		insert 
+		into
+			public_board
+			(	
+				title, 
+				content, 
+				user_no,
+				tag,
+				source
+			)
+		values
+			(
+				#{title}, 
+				#{content}, 
+				#{user_no}
+				<choose>
+					<when test="tag 	!= null">	, #{tag}</when>
+					<otherwise>						, null </otherwise>
+				</choose>
+				<choose>
+					<when test="source 	!= null">	, #{source}</when>
+					<otherwise>						, null </otherwise>
+				</choose>
+			)
+	</insert>
+	
+	<!-- 게시물 조회수 상승 -->
+	<update id="viewUp">
+		update 
+			public_board
+		set
+			view = view + 1
+		where
+			no = #{no}			
+	</update>
+	
+	<!-- 다운로드 횟수 상승 -->
+	<update id="downloadUp">
+		update 
+			public_board
+		set
+			download = download + 1
+		where
+			no = #{no}
+	</update>
+	
+	
+
+	<!-- 게시물 수정 -->
+	<update id="updatepublicBoard">
+		update 
+			public_board
+		<set>
+			<if test="title 	!= null">		title		=	#{title},		</if>
+			<if test="content 	!= null">		content		=	#{content},		</if>
+			<if test="tag 		!= null">		tag			=	#{tag},			</if>
+			<if test="download 	!= null">		download	=	#{download},	</if>
+			<if test="source 	!= null">		source		=	#{source},		</if>
+			update_at = now()
+		</set>
+		where
+			no = #{no}	
+	</update>
+				
+	<!-- 게시물 삭제 -->
+	<delete id="deletepublicBoard">
+		delete from 
+			public_board
+		where
+			no = #{no}
+	</delete>
+	
+	<!-- 종아요 검색 -->
+	<select id="selectLike">
+		select 
+			*
+		from
+			`like`
+		<where>
+			<if test="public_no	!= 0"> board_no = #{board_no} AND</if>
+			<if test="user_no	!= 0"> user_no 	= #{user_no}</if>
+		</where>
+	</select>
+	
+	<!-- 좋아요 추가 -->
+	<insert id="insertLike">
+		insert into
+			`like`
+			(
+				board_no,
+				user_no,
+				type
+			)
+		values
+			(
+				#{board_no},
+				#{user_no},
+				1
+			)
+	</insert>
+	
+	<!-- 좋아요 삭제 -->
+	<insert id="deleteLike">
+		delete from
+			`like`
+		<where>
+			<choose>
+				<when test="no != 0"> no = #{no} </when>
+				<otherwise>
+				<trim suffixOverrides="AND">
+					<if test="board_no 	!= 0">board_no 	= #{board_no} AND type = #{type} AND</if>
+					<if test="user_no 	!= 0">user_no 	= #{user_no} AND</if>
+				</trim>
+				</otherwise>
+			</choose>
+		</where>
+			
+	</insert>
+	
+	<!-- 게시물 댓글 받기 -->
+<!-- 	<select id="selectComment"></select> -->
+	
+	
+</mapper>    
+    
+    
+    
+    
+    
+    

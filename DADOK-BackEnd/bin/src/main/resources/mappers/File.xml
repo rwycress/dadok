@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.FileMapper"> <!-- mybatis는 namespace필수!! -->
+
+	<select id="select" resultType="FileInfo">
+		select
+			*
+		from
+			file
+		where
+			board_no = #{board_no}
+		and
+			savename = #{savename}
+	</select>
+	
+	<select id="selectByBoardNo" resultType="FileInfo">
+		select
+			*
+		from 
+			file
+		where
+			board_no = #{board_no}	
+	</select>
+	
+	
+   <insert id="insertFileInfo">
+   		insert into
+   			file
+   				(
+   				originalname,
+   				savename,
+   				dir,
+   				url,
+   				ext,
+   				board_no
+   				)
+   		values
+   			(
+   				#{originalname},
+   				#{savename},
+   				#{dir},
+   				#{url},
+   				#{ext},
+   				#{board_no}
+   			)
+   </insert>
+   <delete id="deleteFileInfoByBoardNo">
+   		delete from 
+   			file
+   		where
+   			board_no = #{board_no}
+   </delete>
+</mapper>    
+    
+    
+    
+    
+    
+    

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    {% include './setting/html_head.html' %}
+    {% include './css/total_style.html' %}
+    {% include './css/choose_style.html'%}
+    <script>
+      console.log("hello");
+    </script>
+
+  </head>
+  <body>
+    <div class='container'>
+      <div>
+        <div class='head-div'>
+          <h1>{{html_msg}}</h1>
+        </div>
+        
+        <div class='item-center'>
+          <div class='item-inline'>
+             <!--
+            <form action="/test" method = "POST">
+            <!--
+            <form action="http://i3d208.p.ssafy.io/user/kiosk" method = "POST">
+              <input type = "text" name = "user_no" value={{face_n}}>
+              <button class='btn btn-default' value="submit">예</button>
+            </form>
+            <!---->
+            <!-- post를 통해 aws로 값 전달 json형태지만 value만 전달-->
+            <form action="/postuser">
+              <button class='btn btn-default'>예</button>
+            </form>
+            <!---->
+            <!-- post를 통해 aws로 값 전달 json형태지만 value만 전달--
+            <form action="/postuser" method = "POST">
+              <input type = "text" name = "user_no" value={{face_n}}>
+              <button class='btn btn-default' value="submit">예</button>
+            </form>
+            <!---->
+            <!-- post를 통해 aws로 값 전달 json형태지만 value만 전달--
+            <form action="/getuser">
+              <button class='btn btn-default'>예</button>
+            </form>
+            <!---->
+            
+            <!----
+            <form action="/pick">
+              <button class='btn btn-default'>예</button>
+            </form>
+            <!---->
+          </div>
+          <div class='item-inline'>        
+            <form action="/">
+              <button class='btn btn-default'>아니요</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include './setting/body_script_end.html' %}
+  </body>
+</html>

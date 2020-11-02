@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.RequestBoardMapper"> <!-- mybatis는 namespace필수!! -->
+
+	
+   <!-- 이중셀렉 대신에 밑에 적은 좋아요 검색 써서 서비스에서 두번 검색하는게 나을수도? -->
+   <!-- 게시물 페이지 단위로 받아오기 -->
+   <select id="selectByPage" resultType="RequestBoard">
+   		select 
+			rb.`no`			as        'no',
+			rb.title 		as     title,
+			rb.content		as content,
+			us.nickname		as  nickname,
+			rb.complete		as complete,
+			rb.`view`		as      'view',
+			rb.create_at	as create_at,
+   			rb.update_at	as update_at,
+   			(
+			select 
+				count(*) 
+			from 
+				`like` as li
+			where 
+				li.board_no = rb.`no`
+				AND
+				li.type = 2
+			)				as 	'like',
+   			us.nickname		as  user_nickname,
+   			us.no			as 	user_no
+		from 
+			request_board 	as	rb
+		left join
+			chickengak.user as 	us
+		on
+			rb.USER_NO  = us.no
+   		limit
+   			#{page}, #{interval}
+   </select>
+   
+   <!-- 게시물 검색 ( 게시물 제목) -->
+   <!-- 게시물 검색 ( 작성자 ) -->
+   <!-- 게시물 검색 ( 내용 ) -->
+   <select id="search" resultType="RequestBoard">
+   		select 
+			rb.`no`			as        'no',
+			rb.title 		as     title,
+			rb.content		as content,
+			us.nickname		as  nickname,
+			rb.complete		as complete,
+			rb.`view`		as      'view',
+			rb.create_at	as create_at,
+   			rb.update_at	as update_at,
+   			(
+			select 
+				count(*) 
+			from 
+				`like` as li
+			where 
+				li.board_no = rb.`no`
+				AND
+				li.type = 2
+			)				as 	'like',
+   			us.nickname		as  user_nickname,
+   			us.no			as 	user_no
+		from 
+			request_board 	as	rb
+		left join
+			chickengak.user as 	us
+		on
+			rb.USER_NO  = us.no
+      	<where>
+      		<choose>
+      			<when test="title 		!= null"> rb.title 		like 	CONCAT('%',#{title},'%')		</when>
+      			<when test="content 	!= null"> rb.content 	like 	CONCAT('%',#{content},'%') 	</when>
+      			<when test="user_nickname 	!= null"> us.nickname 	= 		#{nickname} 					</when>
+      		</choose>
+      	</where>
+   </select>
+   
+   	<!-- 게시물 상세보기 -->
+   	<select id="select" resultType="RequestBoard">
+   		select
+   			rb.`no`			as        'no',
+			rb.title 		as     title,
+			rb.content		as content,
+			us.nickname		as  nickname,
+			rb.complete		as complete,
+			rb.`view`		as      'view',
+			rb.create_at	as create_at,
+   			rb.update_at	as update_at,
+   			(
+			select 
+				count(*) 
+			from 
+				`like` as li
+			where 
+				li.board_no = rb.`no`
+				AND
+				li.type = 2
+			)				as 	'like',
+   			us.nickname		as  user_nickname,
+   			us.no			as 	user_no
+   		from 
+			request_board 	as	rb
+		left join
+			chickengak.user as 	us
+		on
+			rb.USER_NO  = us.`no`
+   		where 
+   			rb.`no` = #{no}
+   	</select>
+   
+   
+	<!-- 게시물 작성 -->
+	<insert id="insertRequestBoard">
+		insert 
+		into
+			request_board
+			(	
+				title, 
+				content, 
+				user_no
+			)
+		values
+			(
+				#{title}, 
+				#{content}, 
+				#{user_no}
+			)
+	</insert>
+	
+	<!-- 게시물 조회수 상승 -->
+	<update id="viewUp">
+		update 
+			request_board
+		set
+			view = view + 1
+		where
+			no = #{no}			
+	</update>
+	
+
+	<!-- 게시물 수정 -->
+	<update id="updateRequestBoard">
+		update 
+			request_board
+		<set>
+			<if test="title 	!= null">		title		=	#{title},		</if>
+			<if test="content 	!= null">		content		=	#{content},		</if>
+			<if test="complete 	!= null">		complete	=	#{complete},	</if>
+			update_at = now()
+		</set>
+		where
+			no = #{no}	
+	</update>
+				
+	<!-- 게시물 삭제 -->
+	<delete id="deleteRequestBoard">
+		delete from 
+			request_board
+		where
+			no = #{no}
+	</delete>
+	
+	<!-- 종아요 검색 -->
+	<select id="selectLike">
+		select 
+			*
+		from
+			`like`
+		<where>
+			<if test="board_no 	!= 0"> board_no = #{board_no} AND type = 2 AND</if>
+			<if test="user_no	!= 0"> user_no 	= #{user_no}</if>
+		</where>
+	</select>
+	
+	<!-- 좋아요 추가  type2는 requestboard-->
+	<insert id="insertLike">
+		insert into
+			`like`
+			(
+				board_no,
+				user_no,
+				type
+			)
+		values
+			(
+				#{board_no},
+				#{user_no},
+				2
+			)
+	</insert>
+	
+	<!-- 좋아요 삭제 -->
+	<insert id="deleteLike">
+		delete from
+			`like`
+		<where>
+			<choose>
+				<when test="no != 0"> no = #{no} </when>
+				<otherwise>
+				<trim suffixOverrides="AND">
+					<!-- 게시물없앨때 해당 게시글의 댓글들 다 없애기 -->
+					<if test="board_no 	!= 0">board_no 	= #{board_no} AND type = 2 AND</if>
+					<!-- 이거까지 있으면 해당글의 댓글 중에 해당 유저의 댓글 다 없애기 -->
+					<if test="user_no 	!= 0">user_no 	= #{user_no} AND</if>
+				</trim>
+				</otherwise>
+			</choose>
+		</where>
+			
+	</insert>
+	
+	<!-- 게시물 댓글 받기 -->
+<!-- 	<select id="selectComment"></select> -->
+	
+	
+</mapper>    
+    
+    
+    
+    
+    
+    

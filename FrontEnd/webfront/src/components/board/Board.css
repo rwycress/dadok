@@ -1,0 +1,85 @@
+/* .logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+} */
+
+.site-layout-sub-header-background {
+  background: #fff;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+
+.logo {
+  height: 6rem;
+  margin: 16px;
+}
+
+.site-layout-sub-header-background {
+  background: #fff;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+[data-theme="dark"] .site-layout-sub-header-background {
+  background: #141414;
+}
+
+.navbutton {
+  margin-left: 1rem;
+  font-family: "Montserrat";
+  font-size: 1.2rem;
+}
+
+.navselected {
+  margin-left: 1rem;
+  font-family: "Montserrat";
+  font-size: 1.2rem;
+}
+
+.navbutton:hover {
+  font-family: "Montserrat";
+  text-decoration: none;
+}
+
+/* .request-form-box {
+  border: 1px solid black;
+} */
+
+.request-form-title {
+  height: 3em !important;
+  font-size: 1rem !important;
+}
+
+.request-form-content {
+  height: 5em !important;
+  font-size: 1rem !important;
+}
+
+.ant-spin-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* .navselected {
+} */
+
+.cardtitle {
+  font-size: 1.1rem;
+}
+
+.card-text {
+  font-size: 1rem;
+}
+
+.react-tag-input__input::placeholder,
+.react-tag-input__input:-moz-placeholder,
+.react-tag-input__input:-ms-input-placeholder,
+.react-tag-input__input::-moz-placeholder,
+.react-tag-input__input::-webkit-input-placeholder {
+  color: rgb(170, 170, 170) !important;
+}

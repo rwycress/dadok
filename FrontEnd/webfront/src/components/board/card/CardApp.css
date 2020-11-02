@@ -1,0 +1,52 @@
+.CardApp {
+  text-align: center;
+  display: flex;
+}
+
+.CardApp-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.CardApp-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.CardApp-title {
+  font-size: 1.5em;
+}
+
+.CardApp-intro {
+  font-size: large;
+}
+
+.flippy-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  min-width: 100%;
+}
+
+.flippy-card .flippy-front {
+  height: 100%;
+}
+
+.flippy-container {
+  height: 400px !important;
+  width: 20rem;
+}
+
+.backside-button {
+  background-color: #ff7043 !important;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

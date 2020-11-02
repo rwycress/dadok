@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.SensorMapper"> <!-- mybatis는 namespace필수!! -->
+
+	<!-- 일단 완료 -->
+
+	<!-- 유저 번호로 저장된 데이터 받아오기 -->
+   <select id="selectDataByUserNo" resultType="Sensor"> <!-- resultType속성 필수!! -->
+      select 
+      		no,
+      		val,
+      		url,
+      		create_at,
+      		user_no
+      from 
+      		sensor
+      where
+      		user_no = #{user_no}
+   </select>
+   
+	<!-- 데이터 삽입 -->
+	<insert id="insertData">
+		insert 
+		into
+			sensor
+			(
+				val,
+				url,
+				user_no
+			)
+		values
+			(
+				#{val},
+				#{url},
+				#{user_no}
+			)
+	</insert>
+
+	<!-- 데이터 url 수정 -->
+	<update id="updateData">
+		update 
+			sensor
+		<set>
+			<if test="val != null"> val = #{val},</if>
+			<if test="url != null ">url = #{url},</if>
+		</set>
+		where
+			no = #{no}
+	</update>
+		
+	<!-- 데이터 삭제 -->
+	<delete id="deleteData">
+		delete from 
+			sensor
+		where
+			no = #{no}
+	</delete>
+</mapper>    
+    
+    
+    
+    
+    
+    

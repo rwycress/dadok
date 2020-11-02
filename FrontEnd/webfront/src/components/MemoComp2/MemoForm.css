@@ -1,0 +1,10 @@
+.ant-input:focus {
+  border-color: #f96332;
+  outline: 0;
+  -webkit-box-shadow: none;
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.17);
+}
+
+.ant-input:hover {
+  border-color: #f96332;
+}

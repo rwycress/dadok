@@ -1,0 +1,24 @@
+@font-face {
+  font-family: "Nucleo";
+  src: url("../../../assets/fonts/nucleo-outline.ttf");
+}
+#maintitle {
+  font-family: "Montserrat";
+  font-size: 106px;
+}
+/*===============================================
+  메인페이지 글자가 K 아랫줄 이동 제어
+*/
+
+@media (max-width: 960px) {
+  #maintitle {
+    font-size: 86px;
+  }
+}
+@media (max-width: 575px) {
+  #maintitle {
+    font-size: 56px;
+  }
+}
+/* Modify by jsh
+==========================================*/

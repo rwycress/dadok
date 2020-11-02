@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.ReservationMapper"> <!-- mybatis는 namespace필수!! -->
+
+   <!-- 모든 예약정보 받아오기 -->
+   <select id="selectReservations" resultType="Reservation">
+   		select
+   			*
+   		from 
+   			reservation
+   </select>
+	
+	<!-- 원하는 좌석의 오늘 예약 정보 받아오기. -->
+	<select id="selectReservationByDay" resultType="Reservation">
+		select
+			*
+		from
+			reservation
+		where 
+			DATE_FORMAT(start,'%Y.%m.%d') = DATE_FORMAT(#{date},'%Y.%m.%d')
+		and
+			seat_no = #{seat_no}
+	</select>
+	
+	<!-- 원하는 날짜 시간의 프랜차이즈점의 예약 정보 예시) 1월1일 1번가맹점의 11시 예약현황 -->
+	<select id="selectReservationByDateTime" resultType="Reservation">
+		select
+			*
+		from
+			seatinfo as si
+		left join
+			reservation as re
+		on 
+			re.seat_no = si.no
+		where 
+			si.franchisee_no = #{franchisee_no}
+		and
+			DATE_FORMAT(re.start,'%Y.%m.%d.%h') = DATE_FORMAT(#{date},'%Y.%m.%d.%h')
+	</select>
+
+	<!-- 새로운 예약 추가 -->
+	<insert id="insertReservation">
+		insert 
+		into
+			reservation
+			(
+				seat_no, 
+				start, 
+				end, 
+				user_no
+			)
+		values
+			(
+				#{seat_no},
+				#{start},
+				#{end},
+				#{user_no}
+			)
+	</insert>
+
+	<!-- 예약 수정 -->	
+	<update id="updateReservation">
+		update
+			reservation
+		<set>
+			<if test="seat_no != null"> seat_no = #{seat_no},</if>
+			<if test="start != null"> start = #{start},</if>
+			<if test="end != null"> end = #{end},</if>
+		</set>
+		where
+			no = #{no}
+	</update>
+	
+	<!--  예약 삭제 -->
+	<delete id="deleteReservation">
+		delete from
+			reservation
+		where
+			no = #{no}	
+	</delete>
+</mapper>    
+    
+    
+    
+    
+    
+    

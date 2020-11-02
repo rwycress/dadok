@@ -1,0 +1,217 @@
+-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.user
+(
+    `no`         INT              NOT NULL    AUTO_INCREMENT COMMENT '유저번호', 
+    `name`       VARCHAR(90)      NOT NULL    COMMENT '이름', 
+    `nickname`   VARCHAR(90)      NOT NULL    COMMENT '닉네임', 
+    `id`         VARCHAR(90)      NOT NULL    COMMENT '아이디', 
+    `password`   VARCHAR(768)     NOT NULL    COMMENT '비밀번호', 
+    `phone`      VARCHAR(90)      NULL        COMMENT '연락처', 
+    `email`      VARCHAR(120)     NOT NULL    COMMENT '이메일', 
+    `profile`    VARCHAR(768)     NULL        COMMENT '프로필사진URL', 
+    `birth`      DATE             NULL        COMMENT '생년월일', 
+    `info`       VARCHAR(3000)    NULL        COMMENT '소개글', 
+    `join_date`  DATETIME         NOT NULL    DEFAULT now() COMMENT '가입일', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.user COMMENT '사용자';
+
+ALTER TABLE chickengak.user
+    ADD CONSTRAINT UC_id UNIQUE (id);
+
+ALTER TABLE chickengak.user
+    ADD CONSTRAINT UC_email UNIQUE (email);
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.franchisee
+(
+    `no`     INT              NOT NULL    AUTO_INCREMENT COMMENT '가맹점 번호', 
+    `name`   VARCHAR(90)      NOT NULL    COMMENT '가맹점 이름', 
+    `phone`  VARCHAR(90)      NULL        COMMENT '가맹점 전화번호', 
+    `info`   VARCHAR(4500)    NULL        COMMENT '소개글', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.franchisee COMMENT '가맹점';
+
+ALTER TABLE chickengak.franchisee
+    ADD CONSTRAINT UC_name UNIQUE (name);
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.seatinfo
+(
+    `no`                  INT    NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `franchisee_no`       INT    NOT NULL    COMMENT '가맹점 번호', 
+    `franchisee_seat_no`  INT    NOT NULL    COMMENT '가맹점 내 좌석번호', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.seatinfo COMMENT '좌석정보';
+
+ALTER TABLE chickengak.seatinfo
+    ADD CONSTRAINT FK_seatinfo_franchisee_no_franchisee_no FOREIGN KEY (franchisee_no)
+        REFERENCES chickengak.franchisee (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.public_board
+(
+    `no`         INT              NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `title`      VARCHAR(150)     NOT NULL    COMMENT '제목', 
+    `content`    VARCHAR(3000)    NOT NULL    COMMENT '내용', 
+    `tag`        VARCHAR(300)     NULL        COMMENT '태그', 
+    `download`   INT              NOT NULL    DEFAULT 0 COMMENT '다운로드 횟수', 
+    `source`     VARCHAR(600)     NULL        COMMENT '출처', 
+    `user_no`    INT              NOT NULL    COMMENT '작성자번호', 
+    `data_no`    INT              NULL        COMMENT '파일 번호', 
+    `create_at`  DATETIME         NOT NULL    DEFAULT now() COMMENT '생성일자', 
+    `update_at`  DATETIME         NULL        COMMENT '수정일자', 
+    `view`       INT              NOT NULL    DEFAULT 0 COMMENT '조회수', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.public_board COMMENT '공개게시판';
+
+ALTER TABLE chickengak.public_board
+    ADD CONSTRAINT FK_public_board_user_no_user_no FOREIGN KEY (user_no)
+        REFERENCES chickengak.user (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.request_board
+(
+    `no`         INT              NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `user_no`    INT              NOT NULL    COMMENT '작성자', 
+    `title`      VARCHAR(150)     NOT NULL    COMMENT '제목', 
+    `content`    VARCHAR(3000)    NOT NULL    COMMENT '내용', 
+    `complete`   INT              NOT NULL    DEFAULT 0 COMMENT '완료유무', 
+    `view`       INT              NOT NULL    DEFAULT 0 COMMENT '조회수', 
+    `create_at`  DATETIME         NOT NULL    DEFAULT now() COMMENT '생성일시', 
+    `update_at`  DATETIME         NULL        COMMENT '완료유무 변경일시', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.request_board COMMENT '자료요청 게시판';
+
+ALTER TABLE chickengak.request_board
+    ADD CONSTRAINT FK_request_board_user_no_user_no FOREIGN KEY (user_no)
+        REFERENCES chickengak.user (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.like
+(
+    `board_no`  INT    NOT NULL    COMMENT '보드번호', 
+    `user_no`   INT    NOT NULL    COMMENT '유저번호', 
+    `no`        INT    NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `type`      INT    NOT NULL    COMMENT '보드 타입', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.like COMMENT '퍼블릭보드 좋아요';
+
+ALTER TABLE chickengak.like
+    ADD CONSTRAINT FK_like_user_no_user_no FOREIGN KEY (user_no)
+        REFERENCES chickengak.user (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.sensor
+(
+    `no`         INT             NOT NULL    AUTO_INCREMENT COMMENT '센서데이터 번호', 
+    `val`        INT             NULL        COMMENT '소리값', 
+    `url`        VARCHAR(768)    NULL        COMMENT '저장 URL', 
+    `create_at`  DATETIME        NOT NULL    DEFAULT now() COMMENT '생성시간', 
+    `user_no`    INT             NOT NULL    COMMENT '유저번호', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.sensor COMMENT '센서데이터';
+
+ALTER TABLE chickengak.sensor
+    ADD CONSTRAINT FK_sensor_user_no_user_no FOREIGN KEY (user_no)
+        REFERENCES chickengak.user (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.reservation
+(
+    `no`       INT         NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `seat_no`  INT         NOT NULL    COMMENT '좌석번호', 
+    `start`    DATETIME    NOT NULL    COMMENT '시작시간', 
+    `end`      DATETIME    NOT NULL    COMMENT '끝나는 시간', 
+    `user_no`  INT         NOT NULL    COMMENT '예약한 사용자', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.reservation COMMENT '예약';
+
+ALTER TABLE chickengak.reservation
+    ADD CONSTRAINT FK_reservation_seat_no_seatinfo_no FOREIGN KEY (seat_no)
+        REFERENCES chickengak.seatinfo (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE chickengak.reservation
+    ADD CONSTRAINT FK_reservation_user_no_user_no FOREIGN KEY (user_no)
+        REFERENCES chickengak.user (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.memo
+(
+    `no`         INT              NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `user_no`    INT              NOT NULL    COMMENT '작성자번호', 
+    `title`      VARCHAR(900)     NOT NULL    DEFAULT '"제목"' COMMENT '제목', 
+    `content`    VARCHAR(3000)    NOT NULL    DEFAULT '"내용"' COMMENT '내용', 
+    `create_at`  DATETIME         NOT NULL    DEFAULT now() COMMENT '작성일자', 
+    `update_at`  DATETIME         NULL        COMMENT '수정일자', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.memo
+    ADD CONSTRAINT FK_memo_user_no_user_no FOREIGN KEY (user_no)
+        REFERENCES chickengak.user (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.todo
+(
+    `no`         INT             NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `create_at`  DATETIME            NOT NULL    DEFAULT now() COMMENT '작성일', 
+    `user_no`    INT             NOT NULL    COMMENT '작성자번호', 
+    `content`    VARCHAR(450)    NOT NULL    COMMENT '내용', 
+    `complete`   INT             NOT NULL    DEFAULT 0 COMMENT '완료여부', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.todo COMMENT '투두리스트';
+
+ALTER TABLE chickengak.todo
+    ADD CONSTRAINT FK_todo_user_no_user_no FOREIGN KEY (user_no)
+        REFERENCES chickengak.user (no) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- user Table Create SQL
+CREATE TABLE if not exists chickengak.file
+(
+    `no`            INT              NOT NULL    AUTO_INCREMENT COMMENT '번호', 
+    `originalname`  VARCHAR(768)     NOT NULL    COMMENT '원본파일명', 
+    `savename`      VARCHAR(768)     NOT NULL    COMMENT '저장파일명', 
+    `dir`           VARCHAR(1500)    NOT NULL    COMMENT '저장디렉토리', 
+    `url`           VARCHAR(210)     NOT NULL    COMMENT '외부에서 접근하는URL', 
+    `ext`           VARCHAR(60)      NOT NULL    COMMENT '확장자', 
+    `board_no`      INT              NOT NULL    COMMENT '보드번호', 
+    `type`          INT              NOT NULL  default 1  COMMENT '보드타입', 
+    PRIMARY KEY (no)
+);
+
+ALTER TABLE chickengak.file COMMENT '파일저장';
+
+ALTER TABLE chickengak.file
+    ADD CONSTRAINT UC_savename UNIQUE (savename);
+
+

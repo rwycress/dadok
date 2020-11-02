@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    {% include './setting/html_head.html' %}
+    {% include './css/total_style.html'%}
+    {% include './css/sy_choose_style.html'%}
+
+  </head>
+  <body>
+    <div class='container'>
+    
+      <form action="/">
+        <button class='btn btn-default'>{{html_msg}} <br/> 터치해주세요.</button>
+      </form>
+    </div>
+    {% include './setting/body_script_end.html' %}
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.MemoMapper"> <!-- mybatis는 namespace필수!! -->
+
+	<!-- 일단 완료 -->
+
+	<!-- 유저 정보 받아오기 -->
+   <select id="selectMemoByUserNo" resultType="Memo"> <!-- resultType속성 필수!! -->
+      	SELECT 
+      		no,
+      		user_no, 
+      		title, 
+      		content, 
+      		create_at, 
+      		update_at
+		FROM
+			chickengak.memo
+		WHERE 
+			user_no = #{user_no}
+		ORDER BY 
+			no DESC
+   </select>
+   
+   <insert id="insertMemo">
+   		INSERT INTO chickengak.memo
+		    (
+		    user_no, 
+		    title, 
+		    content
+		    )
+		VALUES
+		    (
+			#{user_no},
+			#{title},
+			#{content}
+		    )
+   </insert>
+   
+   <update id="updateMemo">
+		UPDATE chickengak.memo
+		<set>
+			<if test="title != null"> title = #{title},</if>
+			<if test="content != null"> content = #{content},</if>
+		    update_at = NOW()
+		</set>
+		WHERE 
+			no = #{no}
+   </update>
+   
+   <delete id="deleteMemo">
+   		DELETE FROM chickengak.memo
+		WHERE no = #{no};
+   </delete>
+   
+</mapper>    
+    
+    
+    
+    
+    
+    

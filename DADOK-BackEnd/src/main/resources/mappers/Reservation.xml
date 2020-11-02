@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/gueset.xml -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chickengak.mapper.ReservationMapper"> <!-- mybatis는 namespace필수!! -->
+
+   <!-- 모든 예약정보 받아오기 -->
+   <select id="selectReservations" resultType="Reservation">
+   		select
+   			*
+   		from 
+   			reservation
+   </select>
+	
+	<!-- 원하는 좌석의 오늘 예약 정보 받아오기. -->
+	<select id="selectReservationByDay" resultType="Reservation">
+		select
+			re.*,
+			us.nickname	as user_nickname
+		from
+			reservation as re
+		left join
+			chickengak.user as us
+		on 
+			us.no = re.USER_NO 
+		where 
+			DATE_FORMAT(start,'%Y.%m.%d') = DATE_FORMAT(#{date},'%Y.%m.%d')
+		and
+			seat_no = #{seat_no}
+		order by 
+			start
+	</select>
+	
+	<!-- 원하는 날짜 시간의 프랜차이즈점의 예약 정보 예시) 1월1일 1번가맹점의 11시 예약현황 -->
+	<select id="selectReservationByDateTime" resultType="Reservation">
+		select
+			re.no as no,
+			re.seat_no as seat_no,
+			re.start as start,
+			re.end as end,
+			re.USER_NO as user_no,
+			us.NICKNAME as user_nickname
+		from
+			seatinfo as si
+		left join
+			reservation as re
+		on 
+			re.seat_no = si.no
+		left join 
+			chickengak.user as us
+		ON 
+			us.no = re.USER_NO
+		where 
+			si.franchisee_no = #{franchisee_no}
+		and
+			DATE_FORMAT(re.start,'%Y.%m.%d.%h') = DATE_FORMAT(#{date},'%Y.%m.%d.%h')
+		order by 
+			start
+	</select>
+
+	<!-- 원하는 좌석의 오늘 예약 정보 받아오기. -->
+	<select id="selectReservationByUserNow" resultType="Reservation">
+	<![CDATA[ 
+		select
+			re.*,
+			us.nickname	as user_nickname
+		from
+			reservation as re
+		left join
+			chickengak.user as us
+		on 
+			us.no = re.USER_NO 
+		where 
+			start < #{datetime}
+		and
+			end > #{datetime}
+		and 
+			re.user_no = #{user_no}
+		order by 
+			start
+			]]>
+	</select>
+
+	<!-- 새로운 예약 추가 -->
+	<insert id="insertReservation">
+		insert 
+		into
+			reservation
+			(
+				seat_no, 
+				start, 
+				end, 
+				user_no
+			)
+		values
+			(
+				#{seat_no},
+				#{start},
+				#{end},
+				#{user_no}
+			)
+	</insert>
+
+	<!-- 예약 수정 -->	
+	<update id="updateReservation">
+		update
+			reservation
+		<set>
+			<if test="seat_no != null"> seat_no = #{seat_no},</if>
+			<if test="start != null"> start = #{start},</if>
+			<if test="end != null"> end = #{end},</if>
+		</set>
+		where
+			no = #{no}
+	</update>
+	
+	<!--  예약 삭제 -->
+	<delete id="deleteReservation">
+		delete from
+			reservation
+		where
+			no = #{no}	
+	</delete>
+</mapper>    
+    
+    
+    
+    
+    
+    
